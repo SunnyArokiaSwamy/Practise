@@ -7,10 +7,10 @@ addpath(genpath('../CNN/'));
 loadConstants;
 
 % Sunny Inputs
-subject_num = [1 2 3 4 5 6];
-% sessions = [1 2];
+% subject_num = [1 2 3 4 5 6];
+sessions = [1 2];
 
-%subject_num = [1 3];
+subject_num = [1 3];
 event_type = [6,9];
 electrodes = [47 48];
 E = []; N=[];
@@ -66,28 +66,40 @@ YTest = categorical(YTest(Rd2));
 layers = [
     imageInputLayer([2 512 1])
     
-    convolution2dLayer(2,8)
+    convolution2dLayer([2 32],8)
     batchNormalizationLayer
     reluLayer
     
     maxPooling2dLayer([1 2],'Stride',[1 2])
     
-    convolution2dLayer(1,16)
+    convolution2dLayer([1 16],16)
     batchNormalizationLayer
     reluLayer
     
     maxPooling2dLayer([1 2],'Stride',[1 2])
     
-    convolution2dLayer(1,32)
+    convolution2dLayer([1 8],32)
     batchNormalizationLayer
     reluLayer
+    
+    maxPooling2dLayer([1 2],'Stride',[1 2])
+    
+    convolution2dLayer([1 4],64)
+    batchNormalizationLayer
+    reluLayer
+    
+%     fullyConnectedLayer(32)
+%     %dropoutLayer(0.2)
+%         batchNormalizationLayer
+%     reluLayer
     
     fullyConnectedLayer(2)
     softmaxLayer
     classificationLayer];
 
 options = trainingOptions('sgdm', ...
-    'MaxEpochs',100, ...
+    'MaxEpochs',200, ...
+    'InitialLearnRate',0.0001,...
     'Verbose',true, ...
     'Plots','training-progress','ExecutionEnvironment','cpu');
 net = trainNetwork(XTrain,YTrain,layers,options);
